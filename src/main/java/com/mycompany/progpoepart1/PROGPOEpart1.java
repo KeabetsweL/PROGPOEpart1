@@ -44,8 +44,17 @@ public class PROGPOEpart1 {
             System.out.println("Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.");
         }
         
-        System.out.print("Cellphone (+27...): "); 
-        login.setCellPhone(scanner.nextLine());
+        while (true) {
+            System.out.print("Cellphone (+27...): "); 
+            login.setCellPhone(scanner.nextLine());
+            
+            if (login.checkCellPhoneNumber()) { 
+                System.out.println("Cell phone number successfully added."); 
+                break; 
+            }
+            
+            System.out.println("Cell phone number incorrectly formatted or does not contain international code.");
+        }
         
     }
 }

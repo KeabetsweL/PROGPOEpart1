@@ -4,6 +4,8 @@
  */
 package com.mycompany.progpoepart1;
 
+import java.util.regex.Pattern;
+
 /**
  *
  * @author Keabetswe Maisela
@@ -25,6 +27,7 @@ public class Login {
     public void setUsername(String value) { username = value; }
     public void setPassword(String value) { password = value; }
     public void setCellPhone(String value) { cellPhone = value; }
+    private static final Pattern PHONE = Pattern.compile("^\\+27[6-8][0-9]{8}$");
     
     public boolean checkUserName() {
         return username != null && username.length() <= 5 && !username.contains("_");
@@ -39,5 +42,14 @@ public class Login {
             if (!Character.isLetterOrDigit(c)) special = true;
         }
         return upper && digit && special;
+    }
+    
+    /**
+    * South African mobile format: +27 followed by a 9-digit mobile number without its leading zero.
+    * Regex syntax reference: Oracle Java Pattern documentation:
+    * https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/regex/Pattern.html
+    */
+    public boolean checkCellPhoneNumber() {
+        return cellPhone != null && PHONE.matcher(cellPhone).matches();
     }
 }
