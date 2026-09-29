@@ -18,5 +18,12 @@ public class Login {
     private String password;
     private String cellPhone;
     
-     public Login() { }
+    public Login() { }
+     
+    public void setFirstName(String value) { firstName = value; }
+    public void setLastName(String value) { lastName = value; }
+    public void setUsername(String value) { username = value; }
+    public void setPassword(String value) { password = value; }
+    public void setCellPhone(String value) { cellPhone = value; }
+    
 }
