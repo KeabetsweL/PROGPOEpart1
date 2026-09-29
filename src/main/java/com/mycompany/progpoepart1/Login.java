@@ -26,6 +26,14 @@ public class Login {
     private String loginPassword;
     
     public Login() { }
+    
+    public Login(String firstName, String lastName, String username, String password, String cellPhone) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.cellPhone = cellPhone;
+    }
      
     public void setFirstName(String value) { 
         firstName = value; 
