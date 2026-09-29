@@ -26,4 +26,7 @@ public class Login {
     public void setPassword(String value) { password = value; }
     public void setCellPhone(String value) { cellPhone = value; }
     
+    public boolean checkUserName() {
+        return username != null && username.length() <= 5 && !username.contains("_");
+    }
 }

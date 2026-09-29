@@ -22,8 +22,15 @@ public class PROGPOEpart1 {
         System.out.print("Last name: "); 
         login.setLastName(scanner.nextLine().trim());
         
-        System.out.print("Username: "); 
-        login.setUsername(scanner.nextLine());
+        while (true) {
+            System.out.print("Username: ");
+            login.setUsername(scanner.nextLine());
+            if (login.checkUserName()) {
+                System.out.println("Username successfully captured.");
+                break;
+            }
+            System.out.println("Username is not correctly formatted; please ensure that your username does not contain an underscore and is no more than five characters in length.");
+        }
         
         System.out.print("Password: "); 
         login.setPassword(scanner.nextLine());
