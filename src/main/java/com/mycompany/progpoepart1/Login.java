@@ -29,4 +29,15 @@ public class Login {
     public boolean checkUserName() {
         return username != null && username.length() <= 5 && !username.contains("_");
     }
+    
+    public boolean checkPasswordComplexity() {
+        if (password == null || password.length() < 8) return false;
+        boolean upper = false, digit = false, special = false;
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) upper = true;
+            if (Character.isDigit(c)) digit = true;
+            if (!Character.isLetterOrDigit(c)) special = true;
+        }
+        return upper && digit && special;
+    }
 }

@@ -29,11 +29,20 @@ public class PROGPOEpart1 {
                 System.out.println("Username successfully captured.");
                 break;
             }
-            System.out.println("Username is not correctly formatted; please ensure that your username does not contain an underscore and is no more than five characters in length.");
+            System.out.println("Username is not correctly formatted; please ensure that your username contains an underscore and is no more than five characters in length.");
         }
         
-        System.out.print("Password: "); 
-        login.setPassword(scanner.nextLine());
+        while (true) {
+            System.out.print("Password: "); 
+            login.setPassword(scanner.nextLine());
+            
+            if (login.checkPasswordComplexity()) { 
+                System.out.println("Password successfully captured."); 
+                break; 
+            }
+            
+            System.out.println("Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.");
+        }
         
         System.out.print("Cellphone (+27...): "); 
         login.setCellPhone(scanner.nextLine());
