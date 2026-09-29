@@ -56,5 +56,15 @@ public class PROGPOEpart1 {
             System.out.println("Cell phone number incorrectly formatted or does not contain international code.");
         }
         
+        System.out.println(login.registerUser());
+        System.out.println("QuickChat - Login");
+        System.out.print("Username: "); 
+        String username = scanner.nextLine();
+        
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+        login.loginUser(username, password);
+        System.out.println(login.returnLoginStatus());
+        
     }
 }
