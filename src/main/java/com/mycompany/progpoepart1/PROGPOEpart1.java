@@ -226,6 +226,12 @@ public class PROGPOEpart1 {
                 default -> System.out.println("Invalid option. Please select 1, 2 or 3.");
             }
         }
+        
+        System.out.println("\nTotal messages sent: "+ Message.returnTotalMessagess());
+
+        System.out.println("\nThank you for using QuickChat.");
+
+        scanner.close();
     }
     
     /**

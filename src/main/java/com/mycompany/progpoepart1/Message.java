@@ -158,4 +158,12 @@ public class Message {
     public String getMessageText() {
         return messageText;
     }
+    
+    /**
+     * Returns the total number of messages actually sent.
+     * @return 
+     */
+    public static int returnTotalMessagess() {
+        return totalMessagesSent;
+    }
 }
