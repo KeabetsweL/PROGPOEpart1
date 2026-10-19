@@ -63,8 +63,17 @@ public class PROGPOEpart1 {
         
         System.out.print("Password: ");
         String password = scanner.nextLine();
-        login.loginUser(username, password);
+        boolean loginSuccessful = login.loginUser(username, password);
         System.out.println(login.returnLoginStatus());
+        
+        // Part 2 is only available after successful login.
+        if (!loginSuccessful) {
+            System.out.println("You must log in successfully to use QuickChat.");
+            scanner.close();
+            return;
+        }
+        
+        System.out.println("Welcome to QuickChat");
         
     }
 }
