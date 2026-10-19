@@ -150,4 +150,12 @@ public class Message {
     public String getMessageHash() {
         return messageHash;
     }
+    
+    public String getRecipient() {
+        return recipient;
+    }
+
+    public String getMessageText() {
+        return messageText;
+    }
 }

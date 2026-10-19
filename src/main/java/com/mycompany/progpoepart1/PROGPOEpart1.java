@@ -187,6 +187,26 @@ public class PROGPOEpart1 {
                         String result = message.SentMessage(messageOption);
 
                         System.out.println(result);
+                        
+                         /*
+                         * Display complete message details
+                         * after the message has been sent.
+                         */
+                        if (messageOption == 1) {
+                            System.out.println("\nMessage Details");
+                            System.out.println("Message ID: "+ message.getMessageID());
+                            System.out.println("Message Hash: "+ message.getMessageHash());
+                            System.out.println("Recipient: "+ message.getRecipient());
+                            System.out.println("Message: "+ message.getMessageText());
+                        }
+
+                        messagesEntered++;
+
+                        /*
+                         * Once the required number has been entered, exit the for loop.
+                         */
+                        if (messagesEntered >= maximumMessages)
+                            break;
                     }
                 }
                     
