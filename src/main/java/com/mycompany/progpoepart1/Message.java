@@ -130,17 +130,10 @@ public class Message {
      */
     public String checkMessageLength() {
 
-        if (messageText != null && messageText.length() <= 250) {
-            return "Message ready to send.";
-        }
+        if (messageText != null && messageText.length() <= 250)
+            return "Message sent.";
 
-        int excessCharacters = messageText == null
-                ? 0
-                : messageText.length() - 250;
-
-        return "Message exceeds 250 characters by "
-                + excessCharacters
-                + "; please reduce the size.";
+        return "Please enter a message of less than 250 characters.";
     }
     
     public String getMessageID() {
