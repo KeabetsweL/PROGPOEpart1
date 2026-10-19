@@ -210,13 +210,17 @@ public class PROGPOEpart1 {
                     }
                 }
                     
-                case "2" -> /*
+                case "2" -> {/*
                      * Part 2 specifically states that this
                      * functionality is still in development.
                      */
                     System.out.println("Coming Soon.");
+                    break;
+                }
                     
                 case "3" -> {
+                    isSessionActive = false;
+                    break;
                 }
                     
                 default -> System.out.println("Invalid option. Please select 1, 2 or 3.");
