@@ -4,6 +4,8 @@
  */
 package com.mycompany.progpoepart1;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -17,6 +19,9 @@ public class Message {
     private String recipient;
     private String messageText;
     private String messageHash;
+    
+    private static int totalMessagesSent = 0;
+    private static final List<Message> sentMessages = new ArrayList<>();
     
     public Message(int messageNumber, String recipient, String messageText) {
         this.messageNumber = messageNumber;
@@ -58,6 +63,38 @@ public class Message {
                 + ":"
                 + firstWord
                 + lastWord).toUpperCase();
+    }
+    
+    /**
+     * Processes the user's decision:
+     * 1 = Send
+     * 2 = Disregard
+     * 3 = Store
+     * @param option
+     * @return 
+     */
+    public String SentMessage(int option) {
+
+        switch (option) {
+
+            case 1 -> {
+                sentMessages.add(this);
+                totalMessagesSent++;
+                return "Message successfully sent.";
+            }
+
+            case 2 -> {
+                return "Press 0 to delete the message.";
+            }
+
+            case 3 -> {
+                return "Message successfully stored.";
+            }
+
+            default -> {
+                return "Invalid option.";
+            }
+        }
     }
     
 }
