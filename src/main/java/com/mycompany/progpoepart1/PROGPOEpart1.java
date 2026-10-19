@@ -75,5 +75,34 @@ public class PROGPOEpart1 {
         
         System.out.println("Welcome to QuickChat");
         
+        boolean isSessionActive = true;
+        
+        // Keep displaying the menu until the user selects Quit.
+        while (isSessionActive) {
+
+            System.out.println("\nQuickChat Menu");
+            System.out.println("1) Send Messages");
+            System.out.println("2) Show recently sent messages");
+            System.out.println("3) Quit");
+            System.out.print("Select an option: ");
+
+            String menuChoice = scanner.nextLine();
+
+            switch (menuChoice) {
+                case "1" -> {
+                }
+                    
+                case "2" -> /*
+                     * Part 2 specifically states that this
+                     * functionality is still in development.
+                     */
+                    System.out.println("Coming Soon.");
+                    
+                case "3" -> {
+                }
+                    
+                default -> System.out.println("Invalid option. Please select 1, 2 or 3.");
+            }
+        }
     }
 }
