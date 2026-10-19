@@ -123,4 +123,31 @@ public class Message {
     public boolean checkMessageID() {
         return messageID != null && messageID.length() <= 10;
     }
+    
+    /**
+     * Checks that the message contains no more than 250 characters.
+     * @return 
+     */
+    public String checkMessageLength() {
+
+        if (messageText != null && messageText.length() <= 250) {
+            return "Message ready to send.";
+        }
+
+        int excessCharacters = messageText == null
+                ? 0
+                : messageText.length() - 250;
+
+        return "Message exceeds 250 characters by "
+                + excessCharacters
+                + "; please reduce the size.";
+    }
+    
+    public String getMessageID() {
+        return messageID;
+    }
+    
+    public String getMessageHash() {
+        return messageHash;
+    }
 }

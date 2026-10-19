@@ -133,6 +133,60 @@ public class PROGPOEpart1 {
                             if (recipientResult.equals("Cell phone number "+ "successfully captured."))
                                 break;
                         }
+                        
+                        // Message text
+                        String messageText;
+
+                        while (true) {
+
+                            System.out.print("Enter message: ");
+
+                            messageText = scanner.nextLine();
+
+                            Message validationMessage = new Message(messageNumber,recipient,messageText);
+
+                            String lengthResult = validationMessage.checkMessageLength();
+
+                            System.out.println(lengthResult);
+
+                            if (lengthResult.equals("Message ready to send.")) {
+
+                                break;
+                            }
+                        }
+                       
+                        // Create the actual message.
+                        Message message = new Message(messageNumber,recipient,messageText);
+
+                        System.out.println("Message ID: "+ message.getMessageID());
+
+                        System.out.println("Message Hash: "+ message.getMessageHash());
+
+                        // Send / Disregard / Store
+                        System.out.println("\nWhat would you like to do?");
+
+                        System.out.println("1) Send Message");
+
+                        System.out.println("2) Disregard Message");
+
+                        System.out.println("3) Store Message to send later");
+
+                        System.out.print("Select an option: ");
+
+                        int messageOption;
+
+                        try {
+
+                            messageOption = Integer.parseInt(scanner.nextLine());
+
+                        } catch (NumberFormatException e) {
+
+                            messageOption = -1;
+                        }
+
+                        String result = message.SentMessage(messageOption);
+
+                        System.out.println(result);
                     }
                 }
                     
