@@ -97,4 +97,23 @@ public class Message {
         }
     }
     
+    /**
+     * Validates the recipient's South African cellphone number.
+     * Not more than 10 characters
+     * Should start with an international dialing code
+     * @return 
+     */
+    public String checkRecipientCell() {
+
+        if (recipient != null
+                && recipient.matches("^\\+27[6-8][0-9]{8}$")) {
+
+            return "Cell phone number successfully captured.";
+        }
+
+        return "Cell phone number is incorrectly formatted or does not "
+                + "contain an international code. Please correct the "
+                + "number and try again.";
+    }
+    
 }
