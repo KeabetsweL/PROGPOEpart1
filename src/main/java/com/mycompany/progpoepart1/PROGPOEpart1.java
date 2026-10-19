@@ -77,6 +77,9 @@ public class PROGPOEpart1 {
         
         boolean isSessionActive = true;
         
+        int maximumMessages = readNumberOfMessages(scanner);
+        int messagesEntered = 0;
+        
         // Keep displaying the menu until the user selects Quit.
         while (isSessionActive) {
 
@@ -90,6 +93,10 @@ public class PROGPOEpart1 {
 
             switch (menuChoice) {
                 case "1" -> {
+                    if (messagesEntered >= maximumMessages) {
+                        System.out.println("You have entered the maximum "+ "number of messages.");
+                        break;
+                    }
                 }
                     
                 case "2" -> /*
@@ -102,6 +109,32 @@ public class PROGPOEpart1 {
                 }
                     
                 default -> System.out.println("Invalid option. Please select 1, 2 or 3.");
+            }
+        }
+    }
+    
+    /**
+     * Reads the maximum number of messages that the user
+     * wishes to enter during this QuickChat session.
+     */
+    private static int readNumberOfMessages(Scanner scanner) {
+
+        while (true) {
+
+            System.out.print("How many messages would you like to enter? ");
+
+            try {
+
+                int number = Integer.parseInt(scanner.nextLine());
+
+                if (number > 0) {
+                    return number;
+                }
+
+                System.out.println("Please enter a number greater than 0.");
+
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
             }
         }
     }
