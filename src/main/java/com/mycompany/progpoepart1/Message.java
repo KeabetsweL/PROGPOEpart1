@@ -116,4 +116,11 @@ public class Message {
                 + "number and try again.";
     }
     
+    /**
+     * Ensures that the Message ID is not more than ten characters.
+     * @return 
+     */
+    public boolean checkMessageID() {
+        return messageID != null && messageID.length() <= 10;
+    }
 }

@@ -97,6 +97,43 @@ public class PROGPOEpart1 {
                         System.out.println("You have entered the maximum "+ "number of messages.");
                         break;
                     }
+                    
+                    int messagesRemaining = maximumMessages - messagesEntered;
+
+                    /*
+                     * The for loop allows the user to enter only
+                     * the number of messages specified when the
+                     * application started.
+                     */
+                    for (int i = 0; i < messagesRemaining; i++) {
+
+                        int messageNumber = messagesEntered;
+
+                        System.out.println("\nMessage "+ (messageNumber + 1)+ " of "+ maximumMessages);
+
+                        // Recipient
+                        String recipient;
+
+                        while (true) {
+
+                            System.out.print("Enter recipient number (+27...): ");
+
+                            recipient = scanner.nextLine();
+
+                            /*
+                             * Create a temporary message so that
+                             * recipient validation can be performed.
+                             */
+                            Message validationMessage = new Message(messageNumber,recipient,"Temporary message");
+
+                            String recipientResult = validationMessage.checkRecipientCell();
+
+                            System.out.println(recipientResult);
+
+                            if (recipientResult.equals("Cell phone number "+ "successfully captured."))
+                                break;
+                        }
+                    }
                 }
                     
                 case "2" -> /*
