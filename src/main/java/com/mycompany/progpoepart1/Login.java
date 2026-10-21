@@ -189,4 +189,10 @@ public class Login {
     public boolean isLoggedIn() {
         return loggedIn;
     }
+    /**
+    * Supplies the authenticated sender's cellphone number.
+    */
+    public String getCellPhone() {
+        return cellPhone;
+    }
 }
