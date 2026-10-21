@@ -251,7 +251,7 @@ public class QuickChatApplicationTest {
                 2,
                 occurrences(
                         output,
-                        "Please enter a whole number from 1 to 3."
+                        "Please enter a whole number from 1 to 4."
                 )
         );
 
