@@ -38,6 +38,12 @@ public class Message {
     private final List<String> generatedIds = new ArrayList<>();
 
     private final Path storageDirectory;
+    /*
+     * Part 3 integration.
+     * These remain unset when running the original Part 2 tests.
+     */
+    private MessageRepository repository;
+    private String sender;
 
     private String messageID;
     private int messageNumber;
@@ -98,6 +104,7 @@ public class Message {
      * Checks previously generated IDs to avoid duplicates in this session.
      */
     private String generateMessageID() {
+    	
         String candidate;
 
         do {
@@ -108,7 +115,9 @@ public class Message {
             }
 
             candidate = digits.toString();
-        } while (generatedIds.contains(candidate));
+        } while (generatedIds.contains(candidate)
+                || (repository != null
+                && repository.findByMessageID(candidate) != null));
 
         generatedIds.add(candidate);
         return candidate;
@@ -220,65 +229,59 @@ public class Message {
         }
 
         return SentMessage(selected + 1);
-    }
+    }/**
+     * Processes the selected action and updates the Part 3 arrays.
+    *
+    * Only sent messages increase the sent total.
+    * Stored messages are written successfully before being added
+    * to the stored-message array.
+    */
+   public String SentMessage(int choice) {
+       if (choice < 1 || choice > 3) {
+           return "Invalid option. Please choose 1, 2 or 3.";
+       }
 
-    /**
-     * Testable version of the prescribed method.
-     *
-     * 1 = Send
-     * 2 = Disregard
-     * 3 = Store
-     *
-     * Only successfully sent messages increase the sent total.
-     */
-    public String SentMessage(int choice) {
-        if (choice < 1 || choice > 3) {
-            return "Invalid option. Please choose 1, 2 or 3.";
-        }
+       if (messageID == null) {
+           return "Please create a message first.";
+       }
 
-        if (messageID == null) {
-            return "Please create a message first.";
-        }
+       if (completed) {
+           return "This message has already been processed.";
+       }
 
-        if (completed) {
-            return "This message has already been processed.";
-        }
+       if (choice == 2) {
+           rememberMessage(MessageRecord.Status.DISREGARDED);
+           completed = true;
+           return "Press 0 to delete the message.";
+       }
 
-        /*
-         * Disregarding must remain possible even when the recipient
-         * or message is invalid, including the assignment's second example.
-         */
-        if (choice == 2) {
-            completed = true;
-            return "Press 0 to delete the message.";
-        }
+       if (!RECIPIENT_SUCCESS.equals(checkRecipientCell())) {
+           return RECIPIENT_FAILURE;
+       }
 
-        if (!RECIPIENT_SUCCESS.equals(checkRecipientCell())) {
-            return RECIPIENT_FAILURE;
-        }
+       String lengthResult = checkMessageLength();
 
-        String lengthResult = checkMessageLength();
+       if (!"Message ready to send.".equals(lengthResult)) {
+           return lengthResult;
+       }
 
-        if (!"Message ready to send.".equals(lengthResult)) {
-            return lengthResult;
-        }
+       if (choice == 1) {
+           rememberMessage(MessageRecord.Status.SENT);
+           sentMessages.add(currentMessageDetails());
+           completed = true;
+           return "Message successfully sent.";
+       }
 
-        if (choice == 1) {
-            sentMessages.add(currentMessageDetails());
-            completed = true;
-            return "Message successfully sent.";
-        }
+       try {
+           storeMessage();
+           rememberMessage(MessageRecord.Status.STORED);
+           completed = true;
+           return "Message successfully stored.";
 
-        try {
-            storeMessage();
-            completed = true;
-            return "Message successfully stored.";
-        } catch (IOException exception) {
-            // A failed write must not be reported as successful storage.
-            return "Message could not be stored. Please try again.";
-        }
-    }
-
+       } catch (IOException exception) {
+           return "Message could not be stored. Please try again.";
+       }
+   }
     /**
      * Returns every successfully sent message in this session.
      * Stored and disregarded messages are excluded.
@@ -330,6 +333,19 @@ public class Message {
             throw new IllegalStateException(
                     "A valid message is required before storage.");
         }
+        /*
+         * Part 3 storage includes the authenticated sender and status.
+         * The original Part 2 JSON format remains available when
+         * Part 3 tracking has not been enabled.
+         */
+        if (repository != null) {
+            MessageJsonStore jsonStore =
+                    new MessageJsonStore(storageDirectory);
+
+            return jsonStore.save(
+                    currentRecord(MessageRecord.Status.STORED)
+            );
+        }
 
         Files.createDirectories(storageDirectory);
 
@@ -357,6 +373,70 @@ public class Message {
         );
 
         return file;
+    }
+    /**
+     * Enables Part 3 tracking for this messaging session.
+     *
+     * Call once, after successful login and before composing messages.
+     * The application supplies the authenticated user's cellphone number.
+     */
+    public void enablePartThree(
+            MessageRepository repository,
+            String sender) {
+
+        if (repository == null) {
+            throw new IllegalArgumentException(
+                    "A message repository is required."
+            );
+        }
+
+        if (sender == null || sender.isBlank()) {
+            throw new IllegalArgumentException(
+                    "A sender is required."
+            );
+        }
+
+        if (this.repository != null || messageID != null) {
+            throw new IllegalStateException(
+                    "Enable Part 3 once, before composing messages."
+            );
+        }
+
+        this.repository = repository;
+        this.sender = sender;
+    }
+
+    /**
+     * Allows the application to load and delete JSON files
+     * from the same directory used when storing messages.
+     */
+    public Path getStorageDirectory() {
+        return storageDirectory;
+    }
+
+    /**
+     * Takes an immutable snapshot of the current message.
+     *
+     * Disregarded messages may contain incomplete input.
+     */
+    private MessageRecord currentRecord(MessageRecord.Status status) {
+        return new MessageRecord(
+                messageID,
+                messageNumber,
+                sender,
+                recipient == null ? "" : recipient,
+                messageText == null ? "" : messageText,
+                status
+        );
+    }
+
+    /**
+     * Adds the processed message to the appropriate Part 3 array.
+     */
+    private void rememberMessage(MessageRecord.Status status) {
+        if (repository != null) {
+            repository.add(currentRecord(status));
+        }
     }
 
     /**

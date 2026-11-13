@@ -2,6 +2,7 @@ package com.mycompany.progpoepart1;
 
 import java.io.PrintStream;
 import java.util.Scanner;
+import java.io.IOException;
 
 /**
  * Author: Keabetswe Mayisela
@@ -23,114 +24,168 @@ public class PROGPOEpart1 {
             run(scanner, System.out, new Message());
         }
     }
-
     /**
-     * Separates console interaction from main().
-     *
-     * JUnit tests can supply simulated input, capture output and use
-     * temporary message storage without opening dialogs.
-     */
-    public static void run(
-            Scanner scanner,
-            PrintStream output,
-            Message messages) {
+     * Runs the complete application.
+    *
+    * Part 3:
+    * - Loads stored JSON messages into the repository arrays.
+    * - Enables tracking of newly processed messages.
+    * - Adds option 4 for the Stored Messages submenu.
+    */
+   public static void run(
+           Scanner scanner,
+           PrintStream output,
+           Message messages) {
 
-        Login login = registerUser(scanner, output);
+       Login login = registerUser(scanner, output);
 
-        output.println("QuickChat - Login");
-        output.print("Username: ");
-        String username = scanner.nextLine();
+       output.println("QuickChat - Login");
 
-        output.print("Password: ");
-        String password = scanner.nextLine();
+       output.print("Username: ");
+       String username = scanner.nextLine();
 
-        boolean authenticated = login.loginUser(username, password);
-        output.println(login.returnLoginStatus());
+       output.print("Password: ");
+       String password = scanner.nextLine();
 
-        /*
-         * Part 2 requirement 1:
-         * Stop before displaying the messaging menu if login fails.
-         */
-        if (!authenticated || !login.isLoggedIn()) {
-            output.println("Please restart the application to log in again.");
-            return;
-        }
+       boolean authenticated = login.loginUser(username, password);
+       output.println(login.returnLoginStatus());
 
-        output.println("Welcome to QuickChat.");
+       /*
+        * Neither stored messages nor the messaging menu are
+        * accessed before successful authentication.
+        */
+       if (!authenticated || !login.isLoggedIn()) {
+           output.println("Please restart the application to log in again.");
+           return;
+       }
 
-        int requestedMessages = readInteger(
-                scanner,
-                output,
-                "How many messages would you like to enter? ",
-                1,
-                Integer.MAX_VALUE
-        );
+       output.println("Welcome to QuickChat.");
 
-        boolean running = true;
-        boolean messageBatchEntered = false;
+       MessageRepository repository = new MessageRepository();
 
-        /*
-         * Part 2 requirement 4:
-         * The menu repeats until the user selects option 3.
-         */
-        while (running) {
-            output.println();
-            output.println("1) Send Messages");
-            output.println("2) Show recently sent messages");
-            output.println("3) Quit");
+       MessageJsonStore store =
+               new MessageJsonStore(messages.getStorageDirectory());
 
-            int option = readInteger(
-                    scanner,
-                    output,
-                    "Choose an option: ",
-                    1,
-                    3
-            );
+       /*
+        * Load all files before enabling message composition.
+        * If loading fails, stop rather than silently presenting
+        * an incomplete repository.
+        */
+       try {
+           MessageRecord[] loaded = store.loadAll();
 
-            switch (option) {
-                case 1 -> {
-                    /*
-                     * Prevents selecting option 1 again from exceeding
-                     * the number requested at session startup.
-                     */
-                    if (messageBatchEntered) {
-                        output.println(
-                                "You have already entered the requested "
-                                        + "number of messages."
-                        );
-                    } else {
-                        enterMessages(
-                                scanner,
-                                output,
-                                messages,
-                                requestedMessages
-                        );
+           for (MessageRecord message : loaded) {
+               repository.add(message);
+           }
 
-                        messageBatchEntered = true;
+           output.println(
+                   "Stored messages loaded: "
+                           + repository.getStoredMessages().length
+           );
 
-                        output.println(
-                                "Total messages sent: "
-                                        + messages.returnTotalMessagess()
-                        );
-                    }
-                }
+       } catch (IOException | IllegalArgumentException exception) {
+           output.println(
+                   "Stored messages could not be loaded: "
+                           + exception.getMessage()
+           );
 
-                case 2 -> output.println("Coming Soon.");
+           output.println(
+                   "Please check the stored-message files "
+                           + "and restart the application."
+           );
 
-                case 3 -> {
-                    output.println(
-                            "Total messages sent: "
-                                    + messages.returnTotalMessagess()
-                    );
-                    output.println("Goodbye.");
-                    running = false;
-                }
+           return;
+       }
 
-                default -> throw new IllegalStateException(
-                        "Unexpected menu option.");
-            }
-        }
-    }
+       /*
+        * New messages now retain their sender and populate
+        * the sent, stored or disregarded arrays.
+        */
+       messages.enablePartThree(
+               repository,
+               login.getCellPhone()
+       );
+
+       StoredMessagesMenu storedMenu =
+               new StoredMessagesMenu(repository, store);
+
+       int requestedMessages = readInteger(
+               scanner,
+               output,
+               "How many messages would you like to enter? ",
+               1,
+               Integer.MAX_VALUE
+       );
+
+       boolean running = true;
+       boolean messageBatchEntered = false;
+
+       while (running) {
+           output.println();
+           output.println("1) Send Messages");
+           output.println("2) Show recently sent messages");
+           output.println("3) Quit");
+           output.println("4) Stored Messages");
+
+           int option = readInteger(
+                   scanner,
+                   output,
+                   "Choose an option: ",
+                   1,
+                   4
+           );
+
+           switch (option) {
+               case 1 -> {
+                   if (messageBatchEntered) {
+                       output.println(
+                               "You have already entered the requested "
+                                       + "number of messages."
+                       );
+                   } else {
+                       enterMessages(
+                               scanner,
+                               output,
+                               messages,
+                               requestedMessages
+                       );
+
+                       messageBatchEntered = true;
+
+                       output.println(
+                               "Total messages sent: "
+                                       + messages.returnTotalMessagess()
+                       );
+                   }
+               }
+
+               /*
+                * Preserves Part 2's specified response.
+                * The Part 3 sent report is available inside option 4.
+                */
+               case 2 -> output.println("Coming Soon.");
+
+               case 3 -> {
+                   output.println(
+                           "Total messages sent: "
+                                   + messages.returnTotalMessagess()
+                   );
+
+                   output.println("Goodbye.");
+                   running = false;
+               }
+
+               /*
+                * Returning from the submenu resumes this main-menu loop.
+                */
+               case 4 -> storedMenu.run(scanner, output);
+
+               default -> throw new IllegalStateException(
+                       "Unexpected menu option."
+               );
+           }
+       }
+   }
 
     /**
      * Preserves Part 1 registration and retries invalid fields.
